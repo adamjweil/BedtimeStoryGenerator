@@ -46,6 +46,8 @@
 }
 .notebook {
   font-family: Comic Sans MS
+
+
 }
 .container {
   display: grid;
@@ -63,6 +65,7 @@
 .middle-column {
   background-color: #F9F9F9; /* set off-white background color */
   padding: 20px; /* add padding */
+
 }
 
 .right-column {

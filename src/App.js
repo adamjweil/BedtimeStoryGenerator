@@ -34,7 +34,9 @@ const App = () => {
         const response = await axios.post(
         "https://api.openai.com/v1/completions",
         {
-          prompt: `Write a sentence with ${userInput} in it.`,
+          prompt: `
+            Write a children's bedtime story that is roughly 500 to 1000 words. One of the themes in the book should relate to ${userInput}. The story should have a beginning, middle and end. The beginning of the story should be about getting to know the main character. They should be fun and interesting. In the middle of the story they should deal with some sort of obstacle in their lives. The final section of the book will focus on how they overcame the obstacles in their lives, and that are better because of it. The story is for 7-10 year old children. By the end of the story the character should show some growth in their personalities and willingness to accept change.
+          `,
           model: "text-davinci-003",
           max_tokens: 1000,
           temperature: 1,
@@ -66,7 +68,6 @@ const App = () => {
   return (
     <Container fluid className="landing-page">
     <head>
-    <link href="https://fonts.googleapis.com/css?family=Product+Sans&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" />
     </head>
       <Row className="justify-content-center align-items-center h-100" style={{
@@ -136,14 +137,8 @@ const App = () => {
                 <div className="output-field">
 
                   <div className="notebook">
-                    <Typewriter
-                      options={{
-                        strings: [generatedStory],
-                        autoStart: true,
-                        deleteSpeed: 0,
-                        delay: 50,
-                      }}
-                    />
+
+                    {generatedStory}
                   </div>
                   <Button variant="clear-button" onClick={clearStory}>
                     Clear
