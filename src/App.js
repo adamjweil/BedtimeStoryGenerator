@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Form, Button, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook, faBookOpen } from '@fortawesome/free-solid-svg-icons';
@@ -14,7 +14,7 @@ const App = () => {
   // State to store user input and generated story
   const [userInput, setUserInput] = useState('');
   const [generatedStory, setGeneratedStory] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState('');
 
   // Function to handle user input change
   const handleInputChange = (event) => {
@@ -22,24 +22,20 @@ const App = () => {
   }
 
   // Function to generate story
-
   const generateStory = async (e) => {
     e.preventDefault();
     // Show loading spinner
     setIsLoading(true);
-
     console.log(userInput)
-    // console.log(process.env.REACT_APP_OPENAI_API_KEY)
-
+    console.log("Is loading: " + isLoading)
     try {
         const response = await axios.post(
         "https://api.openai.com/v1/completions",
         {
-          prompt: `Write a children's bedtime story that is roughly 500 to 1000 words. One of the themes in the book should relate to ${userInput}. The story should have a beginning, middle and end. The beginning of the story should be about getting to know the main character. They should be fun and interesting. In the middle of the story they should deal with some sort of obstacle in their lives. The final section of the book will focus on how they overcame the obstacles in their lives, and that are better because of it. The story is for 7-10 year old children. By the end of the story the character should show some growth in their personalities and willingness to accept change.`,
-
+          prompt: `Write a sentence with ${userInput} in it.`,
           model: "text-davinci-003",
           max_tokens: 1000,
-          temperature: 1,        
+          temperature: 1,
         },
         {
           headers: {
@@ -54,12 +50,10 @@ const App = () => {
       console.error(error);
     } finally {
       // Hide loading spinner
-     
         setIsLoading(false);
-     
+        console.log("Is loading: " + isLoading);
     }
   };
-  
 
   // Function to clear generated story
   const clearStory = () => {
@@ -96,43 +90,44 @@ const App = () => {
                   }}
                 />
               </Form.Group>
-              <Button variant="primary" onClick={generateStory} className="generate-button">
-                <FontAwesomeIcon icon={faBookOpen} style={{ fontSize: '1em' }} />
-                Generate
+              <Button variant="primary" onClick={generateStory}>
+              Generate
               </Button>
             </div>
           </Form>
 
-     
-         
-          {isLoading ? (
-            <div className="text-center mt-3">
-              <Spinner animation="border" variant="primary" />
+      {isLoading ? (
+        <Button style={{}} variant='primary' disabled>
+        <Spinner
+          animation="border"
+          size="lg"
+          role="status"
+          aria-hidden="true"
+        /> Loading...
+        </Button>
+
+      ) : (
+        generatedStory && (
+          <div className="output-field">
+            <h2>Generated Story:</h2>
+            <div className="notebook">
+              <Typewriter
+                options={{
+                  strings: [generatedStory],
+                  autoStart: true,
+                  delay: 50,
+                }}
+              />
             </div>
-          ) : (
-            generatedStory && (
-              <div className="output-field">
-                <h2>Generated Story:</h2>
-                <div className="notebook">
-                  <Typewriter
-                    options={{
-                      strings: [generatedStory],
-                      autoStart: true,
-                      delay: 50,
-                    }}
-                  />
-                </div>
-                <Button variant="clear-button" onClick={clearStory}>
-                  Clear
-                </Button>
-              </div>
-            )
-          )}
-        </Col>
+            <Button variant="clear-button" onClick={clearStory}>
+              Clear
+            </Button>
+          </div>
+        )
+      )}
+      </Col>
       </Row>
     </Container>
- 
-
   );
 };
 

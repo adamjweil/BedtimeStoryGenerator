@@ -14,7 +14,7 @@
   align-items: center;
   text-align: center;
 }
-
+/* 
 .generate-button {
   display: flex;
   justify-content: center;
@@ -31,7 +31,7 @@
 
 .generate-button > *:first-child {
   color: white;
-}
+} */
 
 .generate-button .book-icon {
   margin-right: 10px;
