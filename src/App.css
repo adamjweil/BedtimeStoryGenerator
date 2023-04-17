@@ -1,6 +1,22 @@
 .title {
+  color: #111; /* dark color */
+  text-shadow: 1px 1px 0 #999, 2px 2px 0 #888, 3px 3px 0 #777, 4px 4px 0 #666; /* metallic shine effect */
+  font-family: 'Lobster', cursive;
+  font-weight: bold;
+  font-size: 32px;
+  margin-top: 40px;
+  margin-bottom: 20px;
   text-align: center;
+  color: #1a1a1a;
+  font-size: 60px;
+  opacity: 0.8;
 }
+
+.title-container {
+  position: relative;
+  height: 100%;
+}
+
 
 .Form {
   display: flex;
@@ -14,24 +30,7 @@
   align-items: center;
   text-align: center;
 }
-/* 
-.generate-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: #007bff;
-  border-color: #007bff;
-}
 
-.generate-button:hover {
-  background-color: #0062cc;
-  border-color: #005cbf;
-}
-
-.generate-button > *:first-child {
-  color: white;
-} */
 
 .generate-button .book-icon {
   margin-right: 10px;
@@ -44,4 +43,29 @@
 
 .generate-button:hover .text {
   color: #f0f0f0;
+}
+.notebook {
+  font-family: Comic Sans MS
+}
+.container {
+  display: grid;
+
+  grid-template-columns: 1fr 3fr 1fr; /* set column sizes */
+  height: 700px; /* set height to 100% */
+}
+
+.left-column {
+  margin-left: -50%;
+  background-color: lightgray;
+  height: 100%;
+}
+
+.middle-column {
+  background-color: #F9F9F9; /* set off-white background color */
+  padding: 20px; /* add padding */
+}
+
+.right-column {
+  background-color: lightgray; /* set background color */
+  margin-right: -40%;
 }
