@@ -4,6 +4,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { OpenAIApi } from 'openai';
 import './App.css';
 import GenerateStoryPage from './components/GenerateStoryPage';
+import NavigationBar from './components/Navbar';
 
 const openai = new OpenAIApi({
   apiKey: process.env.REACT_APP_OPENAI_API_KEY,
@@ -20,23 +21,13 @@ const App = () => {
         <Col>
           <Router>
             <div>
-              <nav>
-                <ul>
-                  <li>
-                    <Link to="/">Home</Link>
-                  </li>
-                  <li>
-                    <Link to="/generate-story">Generate Story</Link>
-                  </li>
-                </ul>
-              </nav>
+              <NavigationBar />
               <Routes>
                 <Route path="/" element={<GenerateStoryPage />} />
-                <Route path="/generate-story" element={<h1>Welcome to the home page</h1>} />
+                <Route path="/" element={<h1>My Stories Page</h1>} />
               </Routes>
             </div>
           </Router>
-          <Row style={{ marginLeft: '10%', marginRight: '10%', marginTop: '30px' }}></Row>
         </Col>
       </Row>
     </Container>
