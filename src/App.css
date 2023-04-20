@@ -12,12 +12,10 @@
   opacity: 0.9;
 }
 
-
 .title-container {
   display: inline;
   height: 100%;
 }
-
 
 .Form {
   display: flex;
@@ -31,7 +29,6 @@
   align-items: center;
   text-align: center;
 }
-
 
 .generate-button .book-icon {
   margin-right: 10px;
@@ -47,9 +44,8 @@
 }
 .notebook {
   font-family: Comic Sans MS
-
-
 }
+
 .container {
   display: grid;
 
@@ -72,4 +68,20 @@
 .right-column {
   background-color: lightgray; /* set background color */
   margin-right: -40%;
+}
+
+.comment-bubble {
+  background-color: #FFFFE0;
+  border: 3px solid #000;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 20px;
+  max-width: 700px;
+}
+
+.comment-bubble p {
+  margin: 0;
+  font-family: cursive;
+  font-weight: 900;
+  font-size: 36px;
 }

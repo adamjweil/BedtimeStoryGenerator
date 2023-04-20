@@ -62,6 +62,7 @@ const GenerateStoryPage = () => {
     setGeneratedStory([]);
     setGeneratedImages([]);
     setUserInput('');
+    setUserInput2('');
   };
 
   const handleNextClick = () => setCurrentParagraph(currentParagraph + 1);
@@ -94,15 +95,10 @@ const GenerateStoryPage = () => {
       setGeneratedImages(images);
     };
     generateImages();
-  }, [generatedStory, userInput2]);
+  }, [generatedStory]);
 
   return (
     <div>
-      <div className="title-container">
-        <h1 className="title" style={{ textAlign: 'center' }}>
-          Bedtime Story
-        </h1>
-      </div>
       <Form style={{ textAlign: 'center' }}>
         <div
           style={{
@@ -117,9 +113,10 @@ const GenerateStoryPage = () => {
             controlId="userInput"
             style={{ textAlign: 'center', justifyContent: 'center' }}
           >
+          <Form.Label style={{ fontWeight: 'bold', fontSize: '20px' }}>Please enter a topic for your story:</Form.Label>
             <Form.Control
               type="text"
-              placeholder="What should story be about?"
+              placeholder="Ninjas, Snowboarding, Mermaids, etc.."
               name="userInput"
               value={userInput}
               onChange={handleInputChange}
@@ -138,6 +135,7 @@ const GenerateStoryPage = () => {
             />
           </Form.Group>
           <Form.Group controlId="userInput2">
+          <Form.Label style={{ fontWeight: 'bold', fontSize: '20px' }}>What's your name?</Form.Label>
             <Form.Control
               style={{
                 backgroundColor: '#F1F3F4',
@@ -152,7 +150,7 @@ const GenerateStoryPage = () => {
                 width: '210px',
               }}
               type="text"
-              placeholder="Name?"
+              placeholder="Peter"
               name="userInput2"
               value={userInput2}
               onChange={handleInputChange}
@@ -169,11 +167,12 @@ const GenerateStoryPage = () => {
               }}
               onClick={generateStory}
             >
-              <BookHalf style={{ marginRight: '5px' }} /> GENERATE
+              Submit
             </Button>
           </div>
         </div>
       </Form>
+      <hr style={{border: '1px solid black'}} />
       <Row>
         <Col>
           {isLoading ? (
@@ -190,10 +189,12 @@ const GenerateStoryPage = () => {
               <div className="output-field">
                 <div className="notebook">
                   <h2 style={{ marginBottom: '20px' }}>Story</h2>
-                  <div>
-                    <img style={{ width: '300px', height: 'auto' }} src={generatedImages[currentParagraph]} alt={`Image for paragraph ${currentParagraph}`} />
-                  </div>
+                  <div className="comment-bubble">
                   <p>{generatedStory[currentParagraph]}</p>
+                  </div>
+                </div>
+                <div>
+                <img style={{ width: '500px', height: 'auto' }} src={generatedImages[currentParagraph]} alt={`Image for paragraph ${currentParagraph}`} />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                   <Button
