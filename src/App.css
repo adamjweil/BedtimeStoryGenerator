@@ -14,7 +14,7 @@
 
 
 .title-container {
-  position: relative;
+  display: inline;
   height: 100%;
 }
 
