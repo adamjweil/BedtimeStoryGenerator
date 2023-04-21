@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Col, Container, Row } from 'react-bootstrap';
 import { OpenAIApi } from 'openai';
 import './App.css';
-import GenerateStoryPage from './components/GenerateStoryPage';
+import GenerateStoryPage from './components/pages/GenerateStoryPage';
 import NavigationBar from './components/Navbar';
 
 const openai = new OpenAIApi({
