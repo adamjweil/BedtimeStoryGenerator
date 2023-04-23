@@ -21,7 +21,7 @@ const NavigationBar = ({ user, setUser }) => {
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="navbar-nav" />
       <Navbar.Collapse id="navbar-nav">
-       <Nav className="ml-auto">
+       <Nav className="ms-auto">
           {user ? (
             <>
               <Nav.Link as={Link} to="/my-account">
