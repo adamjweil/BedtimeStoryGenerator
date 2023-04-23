@@ -28,6 +28,7 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   profilePicture: String,
+  description: String,
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -130,6 +131,25 @@ if (!validPassword) {
 const token = jwt.sign({ _id: user._id, email: user.email }, jwtSecret);
   res.send({ email: user.email, token });
 });
+
+app.put('/api/user/updateDescription', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { description } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { description },
+      { new: true }
+    );
+
+    res.status(200).json({ message: 'Description updated', description: updatedUser.description });
+  } catch (error) {
+    console.error('Error updating description:', error);
+    res.status(500).send('Error updating description');
+  }
+});
+
 
 
   const port = process.env.PORT || 5001;

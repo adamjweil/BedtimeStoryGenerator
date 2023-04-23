@@ -12,7 +12,7 @@ import LoginPage from './components/pages/LoginPage';
 import NavigationBar from './components/Navbar';
 
 import jwt_decode from 'jwt-decode';
-
+import axios from 'axios';
 
 const openai = new OpenAIApi({
   apiKey: process.env.REACT_APP_OPENAI_API_KEY,
@@ -27,6 +27,9 @@ const App = () => {
       try {
         const decodedUser = jwt_decode(token);
         setUser(decodedUser);
+
+        // Set the default authorization header for axios
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       } catch (error) {
         console.error('Error decoding the token:', error);
       }
@@ -46,7 +49,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<GenerateStoryPage />} />
                 <Route path="/my-account" element={<MyAccountPage user={user} setUser={setUser} />} />
-                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/register" element={<RegisterPage setUser={setUser} />} />
                 <Route path="/login" element={<LoginPage setUser={setUser} />} />
 
               </Routes>
