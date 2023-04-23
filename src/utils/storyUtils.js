@@ -1,15 +1,8 @@
 
 export const generateStoryPrompt = (userInput, userInput2) => {
   return `
-  Write a children's bedtime story that is roughly 500 to 1000 words.
-  One of the themes in the story should relate to ${userInput} in a humorous way.
-  The main character should be ${userInput2}, and they should be supremely likable.
-  The story should have a beginning, middle and end.
-  The beginning of the story should be about getting to know the main character. They should have a fun personality and interesting perspective.
-  The middle of the story should be about the main character enduring some sort of obstacle in their lives.
-  The final section of the story should focus on their triumph of said obstacle. They should be anecdotes of how they are better because of it.
-  By the end of the story the character should show some growth in their personalities and willingness to accept change. This can be represented in the story via abstract references, or more directly.
-  Choose words that spark the imagination.
+  Write a sentence about ${userInput}.
+  Make the sentence about a person named ${userInput2}.
   `;
 };
 
