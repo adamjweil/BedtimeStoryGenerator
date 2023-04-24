@@ -20,22 +20,24 @@ const openai = new OpenAIApi({
 
 const App = () => {
   const [user, setUser] = useState(null);
-
+  
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
       try {
-        const decodedUser = jwt_decode(token);
-        setUser(decodedUser);
-
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+  
         // Set the default authorization header for axios
+        const token = parsedUser.token;
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       } catch (error) {
-        console.error('Error decoding the token:', error);
+        console.error('Error parsing stored user:', error);
       }
     }
   }, []);
-
+  
+ 
   return (
     <Container fluid className="landing-page">
       <head>
