@@ -22,13 +22,16 @@ const RegisterPage = ({ setUser }) => {
         localStorage.setItem('token', loginResponse.data.token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${loginResponse.data.token}`;
         setUser(loginResponse.data.user);
+        localStorage.setItem('user', JSON.stringify(loginResponse.data.user));
+
         
       // Navigate to the desired page after successful registration and login
       navigate('/my-account');
     } catch (error) {
-      console.log(error)
-      alert('Error registering. Please try again.');
-    }
+        console.log(error.response);
+        alert('Error registering. Please try again. ' + (error.response && error.response.data.message ? error.response.data.message : ''));
+      }
+      
   };
 
   return (

@@ -29,6 +29,8 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   profilePicture: String,
   description: String,
+  name: String,
+  location: String,
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -90,6 +92,63 @@ app.post('/api/user/updateProfilePicture', authMiddleware, upload.single('profil
   }
 });
 
+app.put('/api/user/updateDescription', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { description, name } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { description, name },
+      { new: true }
+    );
+
+    res.status(200).json({ message: 'Description updated', description: updatedUser.description, name: updatedUser.name });
+   } catch (error) {
+    console.error('Error updating description:', error);
+    res.status(500).send('Error updating description');
+  }
+});
+
+app.put('/api/user/updateName', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { name } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { name },
+      { new: true }
+    );
+
+    res.status(200).json({ message: 'Name updated', name: updatedUser.name });
+  } catch (error) {
+    console.error('Error updating name:', error);
+    res.status(500).send('Error updating name');
+  }
+});
+
+// Add a new route for updating the user's location
+app.put('/api/user/updateLocation', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { location } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { location },
+      { new: true }
+    );
+
+    res.status(200).json({ message: 'Location updated', location: updatedUser.location });
+  } catch (error) {
+    console.error('Error updating location:', error);
+    res.status(500).send('Error updating location');
+  }
+});
+
+
+
 
 app.get('/', (req, res) => {
   res.send('Hello from the server!');
@@ -112,43 +171,59 @@ app.post('/api/auth/register', async (req, res) => {
   // Generate a JWT token for the newly registered user
   const token = jwt.sign({ _id: user._id, email: user.email }, jwtSecret);
 
-  res.status(201).send({ message: 'User created successfully', token });
+  res.status(201).send({
+    message: 'User created successfully',
+    user: {
+      _id: user._id,
+      email: user.email,
+      profilePicture: user.profilePicture,
+      name: user.name,
+      description: user.description,
+      location: user.location,
+    },
+    token,
+  });
 });
 
 app.post('/api/auth/login', async (req, res) => {
-const { email, password } = req.body;
-
-const user = await User.findOne({ email });
-if (!user) {
-  return res.status(400).send('Invalid email or password');
-}
-
-const validPassword = await bcrypt.compare(password, user.password);
-if (!validPassword) {
-  return res.status(400).send('Invalid email or password');
-}
-
-const token = jwt.sign({ _id: user._id, email: user.email }, jwtSecret);
-  res.send({ email: user.email, token });
-});
-
-app.put('/api/user/updateDescription', authMiddleware, async (req, res) => {
   try {
-    const userId = req.user._id;
-    const { description } = req.body;
+    // Find the user by email
+    const user = await User.findOne({ email: req.body.email });
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { description },
-      { new: true }
-    );
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
 
-    res.status(200).json({ message: 'Description updated', description: updatedUser.description });
+    // Compare the provided password with the stored password
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid credentials.' });
+    }
+
+    // Generate a JWT token
+    const token = jwt.sign({ _id: user._id, email: user.email }, jwtSecret, {
+      expiresIn: '1d',
+    });
+
+    // Return the user data and token
+    res.status(200).json({
+      _id: user._id,
+      email: user.email,
+      profilePicture: user.profilePicture,
+      name: user.name,
+      description: user.description,
+      token,
+    });
   } catch (error) {
-    console.error('Error updating description:', error);
-    res.status(500).send('Error updating description');
+    console.error('Error in /api/auth/login:', error);
+    res.status(500).json({ message: 'Error logging in.' });
   }
 });
+
+
+
+
 
 
 
