@@ -25,6 +25,7 @@ const MyAccountPage = ({ user, setUser }) => {
   const [isEditingLocation, setIsEditingLocation] = useState(false);
 
   const [openAIResponse, setOpenAIResponse] = useState("");
+  const [isLoadingStory, setIsLoadingStory] = useState(false);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -54,7 +55,9 @@ const MyAccountPage = ({ user, setUser }) => {
     setLocation(e.target.value);
   };
 
-  const generateCharacterBrief = async () => {
+  const generateCharacterBrief = async (e) => {
+    e.preventDefault();
+
     let prompt = `
         Please take the following details and generate a creative character brief (or character summary). 
         They should be a hero named ${name}. 
@@ -69,6 +72,7 @@ const MyAccountPage = ({ user, setUser }) => {
     const token = process.env.REACT_APP_OPENAI_API_KEY;
 
     try {
+      setIsLoadingStory(true)
       const response = await axios.post(
         "https://api.openai.com/v1/completions",
         {
@@ -89,6 +93,8 @@ const MyAccountPage = ({ user, setUser }) => {
     } catch (error) {
       alert("Error sending data to OpenAI");
       console.log(error);
+    } finally {
+      setIsLoadingStory(false);
     }
   };
 
@@ -214,7 +220,7 @@ const MyAccountPage = ({ user, setUser }) => {
     }
   };
 
-  async function saveSelectedSentence(sentence, checked) {
+  async function saveSelectedSentence(sentence, checked, selectedSentences) {
     const token = localStorage.getItem('token');
   
     try {
@@ -230,6 +236,7 @@ const MyAccountPage = ({ user, setUser }) => {
             : (selectedSentences || []).filter(s => s !== sentence)
         })
       });
+      console.log(response)
   
       if (!response.ok) {
         throw new Error('Failed to update selected sentences');
@@ -472,15 +479,23 @@ const MyAccountPage = ({ user, setUser }) => {
         >
           {" "}
           {/* Right two columns for OpenAI API */}
-          <div className="mt-5">
+          {isLoadingStory ? (
+             <Button variant="primary" disabled>
+             Loading...
+           </Button>
+          ) : (
+            <div className="mt-5">
             <Button onClick={generateCharacterBrief}>Send to OpenAI</Button>
           </div>
+          )}
+     
           <Row className="mt-3 w-100">
             {" "}
             {/* OpenAI Response */}
             <Col>
               <Card>
                 <Card.Body>
+                  {selectedSentences}
                   <h4>Character Brief</h4>
                   <ul>
                     {sentenceButtons}
