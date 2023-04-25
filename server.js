@@ -182,7 +182,22 @@ app.put('/api/selectedSentences', authMiddleware, async (req, res) => {
   }
 });
 
+app.get('/api/selectedSentences', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user._id;
 
+    const selectedSentences = await SelectedSentences.findOne({ userId });
+
+    if (!selectedSentences) {
+      return res.status(404).json({ message: 'Selected sentences not found for this user.' });
+    }
+
+    res.status(200).json({ message: 'Selected sentences retrieved successfully.', sentences: selectedSentences.sentences });
+  } catch (error) {
+    console.error('Error retrieving selected sentences:', error.stack);
+    res.status(500).json({ message: 'Error retrieving selected sentences' });
+  }
+});
 
 
 
