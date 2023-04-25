@@ -35,6 +35,14 @@ const UserSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', UserSchema);
 
+const SelectedSentencesSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  sentences: [String],
+});
+
+const SelectedSentences = mongoose.model('SelectedSentences', SelectedSentencesSchema);
+
+
 // Multer configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -146,6 +154,36 @@ app.put('/api/user/updateLocation', authMiddleware, async (req, res) => {
     res.status(500).send('Error updating location');
   }
 });
+
+app.put('/api/selectedSentences', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { sentences } = req.body;
+
+    let selectedSentences = await SelectedSentences.findOne({ userId });
+
+    if (!selectedSentences) {
+      // If no document exists for the user, create one
+      selectedSentences = new SelectedSentences({ userId, sentences });
+    } else if (selectedSentences.sentences) {
+      // Update the existing document with the new array of sentences
+      selectedSentences.sentences = sentences;
+    } else {
+      // If the returned document has a null 'sentences' property, create a new one
+      selectedSentences = new SelectedSentences({ userId, sentences });
+    }
+
+    await selectedSentences.save();
+
+    res.status(200).json({ message: 'Selected sentences updated', sentences });
+  } catch (error) {
+    console.error('Error updating selected sentences:', error.stack);
+    res.status(500).json({ message: 'Error updating selected sentences' });
+  }
+});
+
+
+
 
 
 

@@ -85,3 +85,19 @@
   font-weight: 900;
   font-size: 36px;
 }
+
+.sentence-item {
+  list-style-type: none;
+  display: flex;
+  align-items: flex-start;
+}
+
+.checkmark {
+  margin-right: 0.5rem;
+}
+
+.sentence-item label {
+  display: inline-block;
+  max-width: calc(100% - 1.5rem);
+  word-wrap: break-word;
+}

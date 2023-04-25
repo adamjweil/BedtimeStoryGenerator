@@ -12,11 +12,11 @@ import {
 
 const MyAccountPage = ({ user, setUser }) => {
   const [file, setFile] = useState(null);
-  const [description, setDescription] = useState(
-    user ? user.description || "" : ""
-  );
+  const [description, setDescription] = useState(user ? user.description || "" : "");
   const [name, setName] = useState(user ? user.name || "" : "");
   const [email, setEmail] = useState(user ? user.email || "" : "");
+  const [selectedSentences, setSelectedSentences] = useState([]);
+
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
@@ -55,7 +55,7 @@ const MyAccountPage = ({ user, setUser }) => {
   };
 
   const generateCharacterBrief = async () => {
-    const prompt = `
+    let prompt = `
         Please take the following details and generate a creative character brief (or character summary). 
         They should be a hero named ${name}. 
         They should be from ${location}. 
@@ -63,7 +63,9 @@ const MyAccountPage = ({ user, setUser }) => {
         The brief should bring in some creative element that relate to the characters and personalities (not limited to, but mentioned above).
         The length of the brief should be around 3 to 5 paragraphs, depending on the creative concepts that can be refenrenced from the users description of themselves.
       `;
-
+    if (selectedSentences) {
+      prompt += `\n\nSelected sentences: ${selectedSentences.join(" ")}`;
+    }
     const token = process.env.REACT_APP_OPENAI_API_KEY;
 
     try {
@@ -83,10 +85,25 @@ const MyAccountPage = ({ user, setUser }) => {
         }
       );
       setOpenAIResponse(response.data.choices[0].text);
+      console.log(response.data.choices[0].text);
     } catch (error) {
       alert("Error sending data to OpenAI");
+      console.log(error);
     }
   };
+
+  // Toggle selection of a sentence
+  const toggleSelectedSentence = (sentence) => {
+    if (selectedSentences.includes(sentence)) {
+      setSelectedSentences(
+        selectedSentences.filter((selected) => selected !== sentence)
+      );
+    } else {
+      setSelectedSentences([...selectedSentences, sentence]);
+    }
+  };
+
+ 
 
   const handleLocationSubmit = async (e) => {
     e.preventDefault();
@@ -196,6 +213,60 @@ const MyAccountPage = ({ user, setUser }) => {
       alert("Error updating description");
     }
   };
+
+  async function saveSelectedSentence(sentence, checked) {
+    const token = localStorage.getItem('token');
+  
+    try {
+      const response = await fetch('/api/selectedSentences', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          selectedSentences: checked
+            ? [...(selectedSentences || []), sentence] // Use a default value if selectedSentences is undefined
+            : (selectedSentences || []).filter(s => s !== sentence)
+        })
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update selected sentences');
+      }
+  
+      // Update the local state of selected sentences
+      setSelectedSentences(selectedSentences => (
+        checked
+          ? [...(selectedSentences || []), sentence] // Use a default value if selectedSentences is undefined
+          : (selectedSentences || []).filter(s => s !== sentence)
+      ));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
+  
+  
+  
+
+   // Split response into sentences and create a Button for each sentence
+   const sentenceButtons = openAIResponse
+   .split(/(?<=[.?!])\s+(?=[A-Z])/)
+   .map((sentence, index) => (
+    <li key={index} className="sentence-item">
+    <input
+      type="checkbox"
+      id={`sentence-${index}`}
+      className="checkmark"
+      checked={selectedSentences.includes(sentence)}
+      onChange={(e) => saveSelectedSentence(sentence, e.target.checked)}
+      />
+    <label htmlFor={`sentence-${index}`}>{sentence.trim()}</label>
+  </li>
+   
+   ));
+
 
   useEffect(() => {
     if (user) {
@@ -410,12 +481,19 @@ const MyAccountPage = ({ user, setUser }) => {
             <Col>
               <Card>
                 <Card.Body>
-                  <h4>OpenAI Response:</h4>
-                  <p>{openAIResponse}</p>
+                  <h4>Character Brief</h4>
+                  <ul>
+                    {sentenceButtons}
+                    </ul>
                 </Card.Body>
               </Card>
             </Col>
           </Row>
+          <Row className="mt-3">
+            <Button onClick={() => generateCharacterBrief(selectedSentences)}>
+              Generate Updated Response
+            </Button>
+          </Row> 
         </Col>
       </Row>
     </Container>
