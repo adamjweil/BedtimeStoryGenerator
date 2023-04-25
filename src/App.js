@@ -4,7 +4,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { OpenAIApi } from 'openai';
 import './App.css';
 import GenerateStoryPage from './components/pages/GenerateStoryPage';
-import MyAccountPage from './components/pages/MyAccountPage';
+import MyAccountPage from './components/pages/profile/MyAccountPage';
 
 import RegisterPage from './components/pages/RegisterPage';
 import LoginPage from './components/pages/LoginPage';
