@@ -9,6 +9,9 @@ const dotenv = require('dotenv');
 
 const jwtSecret = 'your_jwt_secret';
 
+const { OAuth2Client } = require('google-auth-library');
+
+const client = new OAuth2Client(`${process.env.REACT_APP_GOOGLE_CLIENT_ID}`);
 
 dotenv.config();
 
@@ -271,6 +274,47 @@ app.post('/api/auth/login', async (req, res) => {
   } catch (error) {
     console.error('Error in /api/auth/login:', error);
     res.status(500).json({ message: 'Error logging in.' });
+  }
+});
+
+app.post('/api/auth/google', async (req, res) => {
+  try {
+    const { code } = req.body;
+    const { tokens } = await client.getToken(code);
+
+    client.setCredentials(tokens);
+    const { data } = await axios.get('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
+      headers: {
+        Authorization: `Bearer ${tokens.access_token}`,
+      },
+    });
+
+    const user = await User.findOne({ email: data.email });
+    let token;
+
+    if (user) {
+      token = jwt.sign({ _id: user._id, email: user.email }, jwtSecret);
+    } else {
+      const newUser = new User({ email: data.email });
+      await newUser.save();
+      token = jwt.sign({ _id: newUser._id, email: newUser.email }, jwtSecret);
+    }
+
+    res.status(200).send({
+      message: 'User authenticated with Google successfully',
+      user: {
+        _id: user ? user._id : newUser._id,
+        email: data.email,
+        profilePicture: user ? user.profilePicture : '',
+        name: user ? user.name : '',
+        description: user ? user.description : '',
+        location: user ? user.location : '',
+      },
+      token,
+    });
+  } catch (error) {
+    console.error('Error in /api/auth/google:', error);
+    res.status(500).json({ message: 'Error authenticating with Google.' });
   }
 });
 
