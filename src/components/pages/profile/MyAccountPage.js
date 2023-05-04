@@ -66,12 +66,12 @@ const MyAccountPage = ({ user, setUser }) => {
     e.preventDefault();
 
     let prompt = `
-        Please take the following details and generate a creative character brief (or character summary). 
-        They should be a hero named ${name}. 
-        They should be from ${location}. 
-        Here is how they would describe the cooler aspects of themselves: ${description}
-        The brief should bring in some creative element that relate to the characters and personalities (not limited to, but mentioned above).
-        The length of the brief should be around 3 to 5 paragraphs, depending on the creative concepts that can be refenrenced from the users description of themselves.
+      Please come up with 10 interesting story titles and descriptions. 
+      The main character of these stories should be named ${name}.
+      They should be from ${location}. 
+      Here is a brief description of them: ${description}. 
+      The output should have the layout of StoryTitle1: StoryDescription1. StoryTitle2: StoryDescription2. etc. 
+      Don't number the stories.
       `;
     if (selectedSentences) {
       prompt += `\n\nSelected sentences: ${selectedSentences.join(" ")}`;
@@ -138,7 +138,6 @@ const MyAccountPage = ({ user, setUser }) => {
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setIsEditingLocation(false);
-      alert("Location updated successfully");
     } catch (error) {
       alert("Error updating location");
     }
@@ -265,9 +264,14 @@ const MyAccountPage = ({ user, setUser }) => {
   
 
    // Split response into sentences and create a Button for each sentence
+     //  .split(/(?<=[.?!])\s+(?=[A-Z])/)
+
    const sentenceButtons = openAIResponse
-   .split(/(?<=[.?!])\s+(?=[A-Z])/)
-   .map((sentence, index) => (
+   .split(/(?<=\.)\s+(?=[A-Z])/)
+   .filter((_, index) => index % 2 === 0)
+
+    .map((sentence, index) => (
+
     <li key={index} className="sentence-item">
     <input
       type="checkbox"
@@ -276,7 +280,6 @@ const MyAccountPage = ({ user, setUser }) => {
       checked={selectedSentences.includes(sentence)}
       onChange={(e) => saveSelectedSentence(sentence, e.target.checked, selectedSentences)}
     />
-
     <label htmlFor={`sentence-${index}`}>{sentence.trim()}</label>
   </li>
    

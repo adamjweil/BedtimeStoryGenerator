@@ -101,3 +101,12 @@
   max-width: calc(100% - 1.5rem);
   word-wrap: break-word;
 }
+
+.storyTitle {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.storyDescription {
+  font-size: 16px;
+}
