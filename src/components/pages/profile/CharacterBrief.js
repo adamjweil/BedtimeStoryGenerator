@@ -17,7 +17,7 @@ const CharacterBrief = ({ isLoadingStory, selectedSentences, sentenceButtons, ge
         <Col>
           <Card>
             <Card.Body>
-              <h4>Character Brief</h4>
+              <h4>Story Ideas</h4>
               <ul>{sentenceButtons}</ul>
             </Card.Body>
           </Card>

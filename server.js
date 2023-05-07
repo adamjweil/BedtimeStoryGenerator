@@ -55,9 +55,19 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
-const connection = mongoose.connection;
-connection.once('open', () => {
+// Drop the database when the server starts
+const dropDatabase = async () => {
+  try {
+    await mongoose.connection.db.dropDatabase();
+    console.log('Database dropped successfully');
+  } catch (error) {
+    console.error('Error dropping database:', error);
+  }
+};
+
+mongoose.connection.once('open', () => {
   console.log('MongoDB database connection established successfully');
+  dropDatabase();
 });
 
 // Authentication middleware
@@ -276,11 +286,7 @@ app.post('/api/auth/login', async (req, res) => {
 
 
 
-
-
-
-
-  const port = process.env.PORT || 5001;
+const port = process.env.PORT || 5001;
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

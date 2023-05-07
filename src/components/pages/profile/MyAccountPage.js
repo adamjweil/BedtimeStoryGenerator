@@ -15,6 +15,8 @@ import NameEditor from "./forms/NameEditor";
 import LocationEditor from "./forms/LocationEditor";
 import DescriptionEditor from "./forms/DescriptionEditor";
 import SavedSentences from "./SavedSentences";
+import InitialForm from "./forms/InitialForm";
+
 
 
 const MyAccountPage = ({ user, setUser }) => {
@@ -23,16 +25,14 @@ const MyAccountPage = ({ user, setUser }) => {
   const [name, setName] = useState(user ? user.name || "" : "");
   const [email, setEmail] = useState(user ? user.email || "" : "");
   const [selectedSentences, setSelectedSentences] = useState([]);
-
-
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
-
   const [location, setLocation] = useState(user ? user.location || "" : "");
   const [isEditingLocation, setIsEditingLocation] = useState(false);
-
   const [openAIResponse, setOpenAIResponse] = useState("");
   const [isLoadingStory, setIsLoadingStory] = useState(false);
+  const [firstTime, setFirstTime] = useState(true);
+
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -273,108 +273,49 @@ const MyAccountPage = ({ user, setUser }) => {
     .map((sentence, index) => (
 
     <li key={index} className="sentence-item">
-    <input
-      type="checkbox"
-      id={`sentence-${index}`}
-      className="checkmark"
-      checked={selectedSentences.includes(sentence)}
-      onChange={(e) => saveSelectedSentence(sentence, e.target.checked, selectedSentences)}
-    />
-    <label htmlFor={`sentence-${index}`}>{sentence.trim()}</label>
-  </li>
+      <input
+        type="checkbox"
+        id={`sentence-${index}`}
+        className="checkmark"
+        checked={selectedSentences.includes(sentence)}
+        onChange={(e) => saveSelectedSentence(sentence, e.target.checked, selectedSentences)}
+      />
+      <label htmlFor={`sentence-${index}`}>{sentence.trim()}</label>
+    </li>
    
    ));
 
 
-  useEffect(() => {
-    if (user) {
-      setDescription(user.description || "");
-      setName(user.name || "");
-      setLocation(user.location || "");
+   useEffect(() => {
+    if (!firstTime && user) {
+      const updatedUser = {
+        ...user,
+        name: name,
+        location: location,
+        description: description,
+      };
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
     }
-  }, [user]);
+  }, [firstTime, user, name, location, description, setUser]);
+  
 
   return (
     <Container>
-    <Row>
-      <Col sm={4}>
-        <Row
-          className="mt-5"
-          style={{ paddingTop: "50px", paddingBottom: "20px" }}
-        >
-          <Col style={{ minWidth: "300px" }}>
-            <Card>
-              <Card.Body>
-                <ProfilePicture
-                  user={user}
-                  handleProfilePictureSubmit={handleProfilePictureSubmit}
-                  handleFileChange={handleFileChange}
-                />
-                <NameEditor
-                  user={user}
-                  isEditingName={isEditingName}
-                  name={name}
-                  handleNameSubmit={handleNameSubmit}
-                  setName={setName}
-                  toggleEditName={toggleEditName}
-                />
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+      <Row>
+      {firstTime && (
+  <InitialForm
+    user={user}
+    setName={setName}
+    setLocation={setLocation}
+    setDescription={setDescription}
+    onSubmit={() => setFirstTime(false)}
+  />
+)}
 
-        <Row className="mt-3">
-          <Col style={{ minWidth: "300px" }}>
-            <Card>
-              <Card.Body>
-                <LocationEditor
-                  user={user}
-                  isEditingLocation={isEditingLocation}
-                  location={location}
-                  handleLocationSubmit={handleLocationSubmit}
-                  handleLocationChange={handleLocationChange}
-                  toggleEditLocation={toggleEditLocation}
-                />
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <Row className="mt-3">
-          <Col style={{ minWidth: "300px" }}>
-            <Card>
-              <Card.Body>
-                <DescriptionEditor
-                  user={user}
-                  isEditingDescription={isEditingDescription}
-                  description={description}
-                  handleDescriptionSubmit={handleDescriptionSubmit}
-                  handleDescriptionChange={handleDescriptionChange}
-                  toggleEditDescription={toggleEditDescription}
-                />
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Col>
-    </Row>
-    <Row>
-      <Col
-        sm={12}
-        className="d-flex flex-column align-items-center"
-        style={{ marginLeft: "50px" }}
-      >
-           <CharacterBrief
-            selectedSentences={selectedSentences}
-            sentenceButtons={sentenceButtons}
-            generateCharacterBrief={generateCharacterBrief}
-            isLoadingStory={isLoadingStory}
-            clearCharacterBrief={clearCharacterBrief} // Pass the new prop
 
-          />
-        <SavedSentences selectedSentences={selectedSentences} />
-      </Col>
-    </Row>
-
+      </Row>
+   
   </Container>
   );
 };
